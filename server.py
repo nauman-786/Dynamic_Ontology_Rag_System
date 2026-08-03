@@ -48,7 +48,7 @@ class MessageHistory(BaseModel):
 
 class ChatRequest(BaseModel):
     prompt: str
-    history: Optional[List[MessageHistory]] = []
+    history: Optional[List[MessageHistory]] = None
 
 class ChatResponse(BaseModel):
     response: str
@@ -112,6 +112,7 @@ async def upload_document(file: UploadFile = File(...)):
     
     # Save uploaded file to temp location
     suffix = f".{file.filename.split('.')[-1]}"
+    temp_path = None
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
         content = await file.read()
         temp_file.write(content)
@@ -156,7 +157,7 @@ async def upload_document(file: UploadFile = File(...)):
 
     except Exception as e:
         upload_progress = {"percent": 0, "message": "Error: Ingestion failed"}
-        if os.path.exists(temp_path):
+        if temp_path and os.path.exists(temp_path):
             os.unlink(temp_path)
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
 

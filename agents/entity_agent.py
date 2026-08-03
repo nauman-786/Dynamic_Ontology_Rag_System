@@ -6,6 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from config.settings import settings
 from ontology.schema import OntologySchema
+from utils.text_normalize import normalize_text
 from documents.metadata import DocumentChunk
 
 
@@ -105,4 +106,20 @@ Text to extract from:
             }
         )
 
+        # Post-process LLM output to correct near-miss class names.
+        # Normalize ontology class names to build a lookup map.
+        norm_to_class = {normalize_text(c.name): c.name for c in ontology.classes}
+
+        valid_entities = []
+        for ent in result.entities:
+            norm_type = normalize_text(ent.type)
+            if norm_type in norm_to_class:
+                # Correct the type to the canonical ontology class name
+                ent.type = norm_to_class[norm_type]
+                valid_entities.append(ent)
+            else:
+                # Warn and drop entities whose type cannot be matched
+                print(f"⚠️ EntityExtraction Warning: Dropping entity '{ent.name}' with unknown type '{ent.type}'")
+
+        result.entities = valid_entities
         return result

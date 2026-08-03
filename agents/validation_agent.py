@@ -2,8 +2,10 @@ from typing import List, Dict, Tuple
 from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, RDFS
 from ontology.ontology_loader import OntologyLoader
+from ontology.schema import OntologySchema
 from agents.entity_agent import ExtractedEntity
 from agents.relation_agent import ExtractedTriple
+from utils.text_normalize import normalize_text
 
 class OntologyValidationAgent:
     """Deterministically validates extracted triples against the OWL/Turtle ontology."""
@@ -15,9 +17,50 @@ class OntologyValidationAgent:
 
     def _normalize(self, text: str) -> str:
         """Removes spaces, underscores, and lowers case for robust string matching."""
-        if not text:
-            return ""
-        return text.replace(" ", "").replace("_", "").replace("-", "").lower()
+        return normalize_text(text)
+
+    def validate_entities(self, entities: List[ExtractedEntity], ontology: OntologySchema) -> List[ExtractedEntity]:
+        """Validate and deduplicate extracted entities against the ontology.
+
+        - Ensures the entity `type` normalizes to a known ontology class.
+        - Ensures entity `name` is non-empty after stripping.
+        - Deduplicates by normalized (name, type) pairs.
+
+        Returns a list of validated, deduplicated `ExtractedEntity` objects.
+        """
+        if not entities:
+            return []
+
+        # Build normalized ontology class mapping
+        norm_to_class = {normalize_text(c.name): c.name for c in ontology.classes}
+        valid_entities: List[ExtractedEntity] = []
+        seen = set()
+
+        for ent in entities:
+            if not ent.name or not ent.name.strip():
+                print(f"⚠️ Entity Validation: Dropping entity with empty name and type '{ent.type}'")
+                continue
+
+            norm_type = normalize_text(ent.type)
+            if norm_type not in norm_to_class:
+                print(f"⚠️ Entity Validation: Dropping entity '{ent.name}' with unknown type '{ent.type}'")
+                continue
+
+            # Correct the type to canonical class name
+            canonical_type = norm_to_class[norm_type]
+
+            # Normalize name for deduplication (collapse spacing and lowercase)
+            norm_name = normalize_text(ent.name)
+            key = (norm_name, normalize_text(canonical_type))
+            if key in seen:
+                print(f"⚠️ Entity Validation: Removing duplicate entity '{ent.name}' of type '{canonical_type}'")
+                continue
+
+            seen.add(key)
+            ent.type = canonical_type
+            valid_entities.append(ent)
+
+        return valid_entities
 
     def validate_triples(
         self, 

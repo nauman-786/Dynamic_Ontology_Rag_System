@@ -68,8 +68,37 @@ class IngestionWorkflow:
         return state
 
     def generate_ontology_node(self, state: GraphState):
-        # Use first 3 chunks to sample text for ontology generation
-        sample_text = "\n\n".join([c.text for c in state["chunks"][:3]])
+        """Sample representative text across the document (beginning, middle, end)
+
+        Instead of only sampling the first three chunks, pick up to 6-8 chunks
+        evenly distributed across the document to give the ontology agent a
+        representative view of the content. Truncate each sampled chunk to a
+        reasonable character budget to avoid exceeding LLM context limits.
+        """
+        chunks = state.get("chunks", []) or []
+        n = len(chunks)
+        if n == 0:
+            sample_text = ""
+        else:
+            max_samples = min(8, n)
+            # Evenly spaced indices across the chunk list
+            if max_samples == 1:
+                indices = [0]
+            else:
+                indices = [int(round(i * (n - 1) / (max_samples - 1))) for i in range(max_samples)]
+                # Ensure unique and sorted
+                indices = sorted(list(dict.fromkeys(indices)))
+
+            # Budget each sampled chunk to avoid blowing the LLM context
+            max_chars_per_chunk = 1200
+            sampled_texts = []
+            for idx in indices:
+                txt = chunks[idx].text if hasattr(chunks[idx], 'text') else str(chunks[idx])
+                if len(txt) > max_chars_per_chunk:
+                    txt = txt[:max_chars_per_chunk] + "..."
+                sampled_texts.append(txt)
+
+            sample_text = "\n\n".join(sampled_texts)
         
         agent = OntologyGenerationAgent()
         schema = agent.generate(sample_text)
@@ -122,11 +151,18 @@ class IngestionWorkflow:
     def validate_and_store_node(self, state: GraphState):
         # Validate against OWL ontology
         validator = OntologyValidationAgent()
-        valid_triples = validator.validate_triples(state["triples"], state["entities"])
-        
-        # Store in Neo4j
+        # First validate and deduplicate entities
+        validated_entities = validator.validate_entities(state.get("entities", []), state.get("ontology"))
+
+        # Then validate triples using only the validated entities
+        valid_triples = validator.validate_triples(state.get("triples", []), validated_entities)
+
+        # Store in Neo4j using validated entities
         graph_builder = GraphBuilder()
-        graph_builder.build_graph(state["entities"], valid_triples)
+        graph_builder.build_graph(validated_entities, valid_triples)
+
+        # Update state with validated entities
+        state["entities"] = validated_entities
         
         state["valid_triples"] = valid_triples
         state["status_messages"].append(f"Validated triples and stored {len(valid_triples)} edges in Neo4j.")

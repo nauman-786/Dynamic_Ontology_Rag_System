@@ -1,0 +1,178 @@
+@prefix dynto: <http://example.org/dynamic-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/dynamic-ontology> a owl:Ontology .
+
+dynto:BLINDS a owl:ObjectProperty ;
+    rdfs:label "BLINDS" ;
+    rdfs:comment "blinds" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Monster .
+
+dynto:CURSES a owl:ObjectProperty ;
+    rdfs:label "CURSES" ;
+    rdfs:comment "curses" ;
+    rdfs:domain dynto:Deity ;
+    rdfs:range dynto:Person .
+
+dynto:DELAYS a owl:ObjectProperty ;
+    rdfs:label "DELAYS" ;
+    rdfs:comment "delays decision" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:FATHER_OF a owl:ObjectProperty ;
+    rdfs:label "FATHER_OF" ;
+    rdfs:comment "parent of" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:FEATURES a owl:ObjectProperty ;
+    rdfs:label "FEATURES" ;
+    rdfs:comment "includes character" ;
+    rdfs:domain dynto:EpicPoem ;
+    rdfs:range dynto:Person .
+
+dynto:HATES a owl:ObjectProperty ;
+    rdfs:label "HATES" ;
+    rdfs:comment "hates" ;
+    rdfs:domain dynto:Deity ;
+    rdfs:range dynto:Person .
+
+dynto:HUSBAND_OF a owl:ObjectProperty ;
+    rdfs:label "HUSBAND_OF" ;
+    rdfs:comment "married to" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:INVADES a owl:ObjectProperty ;
+    rdfs:label "INVADES" ;
+    rdfs:comment "invades" ;
+    rdfs:domain dynto:Group ;
+    rdfs:range dynto:Location .
+
+dynto:KING_OF a owl:ObjectProperty ;
+    rdfs:label "KING_OF" ;
+    rdfs:comment "rules kingdom" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Location .
+
+dynto:LEADER_OF a owl:ObjectProperty ;
+    rdfs:label "LEADER_OF" ;
+    rdfs:comment "heads group" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Group .
+
+dynto:MEMBER_OF a owl:ObjectProperty ;
+    rdfs:label "MEMBER_OF" ;
+    rdfs:comment "belongs to" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Group .
+
+dynto:MOTHER_OF a owl:ObjectProperty ;
+    rdfs:label "MOTHER_OF" ;
+    rdfs:comment "parent of" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:OPPOSES a owl:ObjectProperty ;
+    rdfs:label "OPPOSES" ;
+    rdfs:comment "opposes" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:PARTICIPATED_IN a owl:ObjectProperty ;
+    rdfs:label "PARTICIPATED_IN" ;
+    rdfs:comment "participated in" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Event .
+
+dynto:PRINCE_OF a owl:ObjectProperty ;
+    rdfs:label "PRINCE_OF" ;
+    rdfs:comment "heir of" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Location .
+
+dynto:PROTECTS a owl:ObjectProperty ;
+    rdfs:label "PROTECTS" ;
+    rdfs:comment "protects" ;
+    rdfs:domain dynto:Deity ;
+    rdfs:range dynto:Person .
+
+dynto:QUEEN_OF a owl:ObjectProperty ;
+    rdfs:label "QUEEN_OF" ;
+    rdfs:comment "rules kingdom" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Location .
+
+dynto:RESISTS a owl:ObjectProperty ;
+    rdfs:label "RESISTS" ;
+    rdfs:comment "resists" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Group .
+
+dynto:SEARCHES_FOR a owl:ObjectProperty ;
+    rdfs:label "SEARCHES_FOR" ;
+    rdfs:comment "searches for" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:SON_OF a owl:ObjectProperty ;
+    rdfs:label "SON_OF" ;
+    rdfs:comment "child of" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:SON_OF_DEITY a owl:ObjectProperty ;
+    rdfs:label "SON_OF_DEITY" ;
+    rdfs:comment "son of" ;
+    rdfs:domain dynto:Monster ;
+    rdfs:range dynto:Deity .
+
+dynto:TOOK_PLACE_IN a owl:ObjectProperty ;
+    rdfs:label "TOOK_PLACE_IN" ;
+    rdfs:comment "occurred at" ;
+    rdfs:domain dynto:Event ;
+    rdfs:range dynto:Location .
+
+dynto:WANTS_MARRIAGE_WITH a owl:ObjectProperty ;
+    rdfs:label "WANTS_MARRIAGE_WITH" ;
+    rdfs:comment "seeks marriage" ;
+    rdfs:domain dynto:Group ;
+    rdfs:range dynto:Person .
+
+dynto:WIFE_OF a owl:ObjectProperty ;
+    rdfs:label "WIFE_OF" ;
+    rdfs:comment "married to" ;
+    rdfs:domain dynto:Person ;
+    rdfs:range dynto:Person .
+
+dynto:EpicPoem a owl:Class ;
+    rdfs:label "EpicPoem" ;
+    rdfs:comment "Ancient Greek poem" .
+
+dynto:Event a owl:Class ;
+    rdfs:label "Event" ;
+    rdfs:comment "Significant occurrence" .
+
+dynto:Monster a owl:Class ;
+    rdfs:label "Monster" ;
+    rdfs:comment "Mythical creature" .
+
+dynto:Deity a owl:Class ;
+    rdfs:label "Deity" ;
+    rdfs:comment "Divine being" .
+
+dynto:Group a owl:Class ;
+    rdfs:label "Group" ;
+    rdfs:comment "Collective of people" .
+
+dynto:Location a owl:Class ;
+    rdfs:label "Location" ;
+    rdfs:comment "Geographic place" .
+
+dynto:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "Human character" .
+

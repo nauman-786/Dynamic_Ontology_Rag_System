@@ -13,7 +13,7 @@ class OntologyGenerationAgent:
         self.llm = ChatGroq(
             model=settings.DEFAULT_MODEL,
             api_key=settings.GROQ_API_KEY,
-            temperature=0.1,
+            temperature=0.0,
             max_tokens=4096,
             max_retries=5 # Increased token limit to prevent JSON truncation
         )
